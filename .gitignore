@@ -24,3 +24,4 @@ yarn-error.log
 !.env.example
 public/serviceAccountKey.json
 public/assets/admin/js/pages/leaflet-map.init.js
+.env.example
