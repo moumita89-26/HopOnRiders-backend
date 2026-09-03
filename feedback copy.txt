@@ -1,0 +1,65 @@
+1. Manage Users
+• Ability to search, filter, and sort users (drivers and riders) by:
+• Name, email, phone number, ride history, rating, etc.
+• The existing status indicators are a great start—ideally, these should reflect document submission status (e.g., license, vehicle registration).
+  reply : filter/search and shorting with Name, email, phone number and rating done
+⸻
+2. Manage Rides
+• Consider adjusting ride status terminology to avoid overlap with user status:
+• Requested → Pending
+• Confirmed → Approved
+• Finished/Concluded → Completed
+ reply : text changes done
+ 
+⸻
+3. Manage Trip Requests
+• Include options to Modify or Cancel Rides from the backend (important for fraud handling or emergency changes).
+• Add a Matchmaking Log to track how riders are paired with drivers.
+    reply : you can edit now ride only
+⸻
+4. Payments & Transactions (CMS?)
+  • Not sure what’s currently covered under CMS—if it includes payment data, we recommend the following additions:
+  • View transaction logs (ride fare, commission, driver payout).
+  • Include details of any manual adjustments or refunds.
+  • Add revenue reports (daily, weekly, monthly, yearly).
+    reply : done check revenue reports 
+⸻
+5. Email Templates
+  • The “Manage Email Templates” section could use a bit more detail to assess its completeness.
+⸻
+6. Safety & Incident Management
+  • Add a dedicated section to:
+  • Manage complaints or safety issues submitted by users.
+  • Flagged items: view flagged users, rides, or vehicles.
+  • Access in-app chat logs for dispute resolution.
+
+⸻
+7. Admin Roles & Permissions
+  • Implement multi-level admin roles:
+  • Super Admin – full access
+  • Support Staff – limited access
+  • Include an Audit Log to track admin actions across the platform.
+
+⸻
+8. Analytics & Reporting
+  Would be helpful to include insights such as:
+  • User growth metrics
+  • Ride volumes
+  • Active drivers vs riders
+  • Geographic heat maps for ride density
+  • User retention rates
+
+scope point
+7. Analytics and Reporting
+> Generate reports on user activity, trip data, financial performance, etc.
+> Analyze data to identify trends and areas for improvement
+Note: Google and basic analytics can be implemented for this. However, implementation of
+any AI based analytical tool is not being considered for this MVP phase.
+
+add payout (revenue report)  status maintained only.
+add refunds (revenue report) status maintained only.
+add filter date wise in report
+two ride not start at one time
+add text dashboard ride(drive) trip (passenger)
+revenue add tax
+csv export 

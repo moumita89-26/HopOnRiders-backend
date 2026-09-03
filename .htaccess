@@ -1,0 +1,28 @@
+<ifmodule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    RewriteCond %{REQUEST_FILENAME} -d [OR]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ ^$1 [N]
+
+    RewriteCond %{REQUEST_URI} (\.\w+$) [NC]
+    RewriteRule ^(.*)$ public/$1 
+
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ server.php
+
+
+</ifmodule>
+
+php_value post_max_size 1024M
+php_value upload_max_filesize 1024M
+
+<IfModule mod_security.c>
+    # Turn off mod_security filtering.  SMF is a big boy, it does not need its hands held.
+    SecFilterEngine Off
+
+    # The below probably isn't needed, but better safe than sorry.
+    SecFilterScanPOST Off
+</IfModule>

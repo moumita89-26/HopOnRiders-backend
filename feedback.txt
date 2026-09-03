@@ -1,0 +1,34 @@
+• Add a Matchmaking Log to track how riders are paired with drivers.
+
+• View transaction logs (ride fare, commission, driver payout).
+
+• Include details of any manual adjustments or refunds.
+
+
+
+According to your request, Milestone 4 has been split as follows:
+ 
+Milestone 4A:
+Timeline: 10 Working Days
+Amount: $720 USD
+Deliverables
+> Continue to develop more JSON APIs for the mobile app (as needed for the functionalities to be implemented in this milestone)
+> Development of the following dynamic functionalities of the Android mobile app implementing the relevant APIs:
+	- Post a trip requirement as passenger
+	- View the trip requirement(s) posted by the passenger(s) and submit a bid request
+	- View the request(s) submitted by the driver(s) and booking
+> Relevant modules in admin panel 
+
+=> bid status => default Pending, Confirmed
+ 
+Milestone 4B:
+Timeline: 10 Working Days
+Amount: $480 USD
+Deliverables
+> Continue to develop more JSON APIs for the mobile app (as needed for the functionalities to be implemented in this milestone)
+> Development of the following dynamic functionalities of the Android mobile app implementing the relevant APIs:
+	- Payment gateway integration (in test mode)
+	- Safety Features (SMS Gateway integration)
+> Relevant modules in admin panel
+ 
+We have already started working for Milestone 4A and shall share an update soon.
