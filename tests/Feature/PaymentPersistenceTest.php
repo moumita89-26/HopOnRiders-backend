@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CommonController;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use ReflectionMethod;
 use Tests\TestCase;
@@ -81,6 +82,78 @@ class PaymentPersistenceTest extends TestCase
             'status' => 'completed',
             'payment_reference' => 'HOPON_20260903162916_3129',
             'paygo_transaction_reference' => 'PGAC6a33372e043cf52e10f0a50bd8d8e912',
+        ]);
+    }
+
+    public function test_collection_is_recorded_before_returning_provider_response(): void
+    {
+        Http::fake([
+            '*/portal/gateway/login/merchant' => Http::response(['access_token' => 'test-token']),
+            '*/mno/airtel/collect' => Http::response([
+                'status' => 'PENDING',
+                'header' => [
+                    'userRef' => 'HOPON_TEST_1001',
+                    'reqRef' => 'PAYGO_REQUEST_1001',
+                ],
+            ]),
+        ]);
+
+        $request = Request::create('/', 'POST', [
+            'provider' => 'airtel',
+            'mobileNumber' => '260970000001',
+            'amount' => '1125',
+            'userRef' => 'HOPON_TEST_1001',
+        ]);
+
+        $response = app(CommonController::class)->collectMoney($request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertDatabaseHas('payments', [
+            'payment_method' => 'mobile_money',
+            'payment_provider' => 'airtel',
+            'amount' => 1125,
+            'status' => 'pending',
+            'payment_reference' => 'HOPON_TEST_1001',
+            'paygo_transaction_reference' => 'PAYGO_REQUEST_1001',
+        ]);
+    }
+
+    public function test_status_poll_updates_the_initiated_payment_without_creating_a_duplicate(): void
+    {
+        DB::table('payments')->insert([
+            'payment_method' => 'mobile_money',
+            'payment_provider' => 'airtel',
+            'amount' => 1125,
+            'status' => 'pending',
+            'payment_reference' => 'HOPON_TEST_1002',
+            'paygo_transaction_reference' => 'PAYGO_REQUEST_1002',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $request = Request::create('/', 'POST', [
+            'provider' => 'airtel',
+            'merRef' => 'HOPON_TEST_1002',
+            'paygoReqRef' => 'PAYGO_REQUEST_1002',
+        ]);
+        $providerResponse = [
+            'status' => 'SUCCESS',
+            'txn' => [
+                'merRef' => 'HOPON_TEST_1002',
+                'reqRef' => 'PAYGO_REQUEST_1002',
+                'mnoRef' => 'AIRTEL_TRANSACTION_1002',
+                'amount' => 1125,
+            ],
+        ];
+
+        $method = new ReflectionMethod(CommonController::class, 'storePaymentResult');
+        $method->invoke(app(CommonController::class), $request, $providerResponse);
+
+        $this->assertSame(1, DB::table('payments')->count());
+        $this->assertDatabaseHas('payments', [
+            'status' => 'completed',
+            'payment_reference' => 'HOPON_TEST_1002',
+            'paygo_transaction_reference' => 'AIRTEL_TRANSACTION_1002',
         ]);
     }
 }
