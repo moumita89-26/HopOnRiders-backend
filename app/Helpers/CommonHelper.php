@@ -58,6 +58,10 @@ class CommonHelper
         $template = $config['template'];
 
         $template = AdminHelper::first('cms_email_templates', ['slug' => $template]);
+        if (!$template) {
+            throw new \RuntimeException("Email template [{$config['template']}] is not configured.");
+        }
+
         $html = $template->content;
         $subject = $template->subject;
         foreach ($data as $key => $val) {
@@ -68,7 +72,7 @@ class CommonHelper
         $attachments = (!empty($config['attachments'])) ?$config['attachments']: [];
 
         $setting_dtls = Settings::find(1);
-        $logo =  $setting_dtls->logo;
+        $logo = $setting_dtls?->logo;
         \Mail::send("emails.email_template", ['content' => $html,'logo'=>$logo], function ($message) use ($to, $subject, $template, $attachments) {
             $message->priority(1);
             $message->to($to);

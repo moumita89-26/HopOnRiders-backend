@@ -933,6 +933,9 @@ class AdminHelper
 
         $template = AdminHelper::first('cms_email_templates', ['slug' => $template]);
 
+        if (!$template) {
+            throw new \RuntimeException("Email template [{$config['template']}] is not configured.");
+        }
 
         $html = $template->content;
         $subject = $template->subject;
@@ -943,7 +946,7 @@ class AdminHelper
         }
         $attachments = (!empty($config['attachments'])) ?$config['attachments']: [];
         $setting_dtls = Settings::find(1);
-        $logo =  $setting_dtls->logo;
+        $logo = $setting_dtls?->logo;
 
         if (!empty($config['send_at'])) {
             $a = [];
@@ -962,7 +965,7 @@ class AdminHelper
         }
         //dd($html);
 
-        \Mail::send("admin.emails.email_template", ['content' => $html,'logo'=>$logo], function ($message) use ($to, $subject, $template, $attachments) {
+        \Mail::send("emails.email_template", ['content' => $html,'logo'=>$logo], function ($message) use ($to, $subject, $template, $attachments) {
             $message->priority(1);
             $message->to($to);
 

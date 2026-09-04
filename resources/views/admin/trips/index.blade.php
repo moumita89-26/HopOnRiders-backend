@@ -119,8 +119,10 @@
                                         <td>{{ $data->luggage_count }}</td>
                                         <td>
                                             @if ($data->cart_type == 1)
+                                                Any Type
+                                            @elseif ($data->cart_type == 2)
                                                 Hatchback
-                                            @elseif($data->cart_type == 2)
+                                            @elseif($data->cart_type == 3)
                                                 SUV
                                             @else
                                                 Sedan

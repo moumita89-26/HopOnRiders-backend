@@ -11,6 +11,7 @@ use App\Models\UserOtp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -363,15 +364,16 @@ class UserController extends Controller
                 'email' => $request->email,
                 'otp' => $otp
             );
-            try {
-                CommonHelper::sendEmail(['to' =>  $request->email, 'data' => $data, 'template' => 'email-otp-api']);
-            } catch (\Exception $e) {
-                dd($e);
-            }
+            CommonHelper::sendEmail(['to' => $request->email, 'data' => $data, 'template' => 'email-otp-api']);
 
             return CustomHelper::SuccessResponse("OTP send Successfully", $otp);
-        } catch (\Exception $e) {
-            return CustomHelper::ErrorResponse($e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Unable to send email OTP.', [
+                'email' => $request->input('email'),
+                'exception' => $e,
+            ]);
+
+            return CustomHelper::ErrorResponse('Unable to send OTP email. Please try again.');
         }
     }
     public function verifyOTP(Request $request)

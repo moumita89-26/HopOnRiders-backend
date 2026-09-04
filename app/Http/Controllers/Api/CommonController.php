@@ -219,6 +219,23 @@ class CommonController extends Controller
         $provider = $validated['provider'] ?? 'airtel';
         $userRef = $validated['userRef'] ?? 'HOPON_'.now()->format('YmdHis').'_'.random_int(1000, 9999);
 
+        if (Payment::where('payment_reference', $userRef)->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Merchant reference has already been used.',
+            ], 409);
+        }
+
+        // Persist before contacting PayGo so an accepted collection can never be
+        // left without a local reconciliation record.
+        Payment::create([
+            'payment_method' => 'mobile_money',
+            'payment_provider' => $provider,
+            'amount' => $validated['amount'],
+            'status' => 'pending',
+            'payment_reference' => $userRef,
+        ]);
+
         // Step 2: Call Collect API
         $response = Http::withToken($token)->post(
             $this->baseUrl.'/mno/'.$provider.'/collect',
@@ -232,7 +249,10 @@ class CommonController extends Controller
             ]
         );
 
-        $data = $response->json();
+        $data = $response->json() ?? [];
+        if (! $response->successful() && ! data_get($data, 'status')) {
+            $data['status'] = 'FAILED';
+        }
 
         $paymentRequest = clone $request;
         $paymentRequest->merge([
@@ -418,19 +438,20 @@ class CommonController extends Controller
             }
 
             $attributes = [
-                'booking_id' => $booking?->id,
-                'trip_request_id' => $tripRequest?->id,
-                'trip_bid_id' => $request->input('tripBidId'),
+                'booking_id' => $booking?->id ?? $payment?->booking_id,
+                'trip_request_id' => $tripRequest?->id ?? $payment?->trip_request_id,
+                'trip_bid_id' => $request->input('tripBidId', $payment?->trip_bid_id),
                 'payment_method' => 'mobile_money',
-                'payment_provider' => $request->input('provider', 'airtel'),
+                'payment_provider' => $request->input('provider', $payment?->payment_provider ?? 'airtel'),
                 'amount' => $booking?->total_fare
                     ?? $request->input('totalFare')
                     ?? $request->input('amount')
                     ?? data_get($response, 'txn.amount')
+                    ?? $payment?->amount
                     ?? 0,
                 'status' => $status,
-                'payment_reference' => $merchantReference,
-                'paygo_transaction_reference' => $paygoTransactionReference,
+                'payment_reference' => $merchantReference ?? $payment?->payment_reference,
+                'paygo_transaction_reference' => $paygoTransactionReference ?? $payment?->paygo_transaction_reference,
             ];
 
             if ($payment) {

@@ -67,8 +67,8 @@
                                 <div class="mb-6 ">
                                     <label class="form-label">Select Role</label>
                                     <select name="role" class="form-control" required>
-                                        <option value="1">Driver</option>
-                                        <option value="2">Passanger</option>
+                                        <option value="1" {{ old('role', $row->role) == 1 ? 'selected' : '' }}>Driver</option>
+                                        <option value="2" {{ old('role', $row->role) == 2 ? 'selected' : '' }}>Passenger</option>
                                     </select>
                                     @error('role')
                                         <div class="text-danger mt-1" role="alert">
@@ -184,9 +184,10 @@
                                     <div class="mb-6 ">
                                         <label class="form-label">Document Verify</label>
                                         <select name="is_document_verify" class="form-control" required>
-                                            <option value="1" {{ $row->is_document_verify == 1 ? 'selected' : '' }}>
+                                            <option value="1" {{ old('is_document_verify', $row->is_document_verify) == 1 ? 'selected' : '' }}>
                                                 Approved</option>
-                                            <option value="0" {{ $row->is_document_verify == 0 ? 'selected' : '' }}>Pending</option>
+                                            <option value="0" {{ old('is_document_verify', $row->is_document_verify) == 0 ? 'selected' : '' }}>
+                                                Pending</option>
                                         </select>
                                         @error('is_document_verify')
                                             <div class="text-danger mt-1" role="alert">
@@ -202,8 +203,10 @@
                                 <div class="mb-6 ">
                                     <label class="form-label">Verified</label>
                                     <select name="is_verified" class="form-control" required>
-                                        <option value="1">Approved</option>
-                                        <option value="0">Pending</option>
+                                        <option value="1" {{ old('is_verified', $row->is_verified) == 1 ? 'selected' : '' }}>
+                                            Approved</option>
+                                        <option value="0" {{ old('is_verified', $row->is_verified) == 0 ? 'selected' : '' }}>
+                                            Pending</option>
                                     </select>
                                     @error('is_verified')
                                         <div class="text-danger mt-1" role="alert">
