@@ -149,5 +149,7 @@ class AdminSeeder extends Seeder
             'created_by' => $admin_id,
             'created_at' => date('Y-m-d H:i:s')
         ]);
+
+        $this->call(HopOnAdminMenuSeeder::class);
     }
 }

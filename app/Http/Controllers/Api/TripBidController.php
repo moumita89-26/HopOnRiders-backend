@@ -10,6 +10,7 @@ use App\Models\TripBid;
 use App\Models\TripRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
@@ -22,13 +23,25 @@ class TripBidController extends Controller
             return CustomHelper::ErrorResponse("Your Account has been suspended. Please contact admin");
         }
         try {
+            $validator = Validator::make($request->only('tripId'), [
+                'tripId' => ['required', 'integer', 'min:1'],
+            ]);
+            if ($validator->fails()) {
+                return CustomHelper::ErrorResponse('A valid trip request ID is required.');
+            }
+
+            $tripRequest = TripRequest::where('id', $request->tripId)->first();
+            if (! $tripRequest) {
+                return CustomHelper::ErrorResponse('Trip request not found.');
+            }
+
             $bidId =  TripBid::where('trip_id', $request->tripId)->where('driver_id', $request->userId)->first();
             if ($bidId) {
                 TripBid::where('trip_id', $request->tripId)->where('driver_id', $request->userId)->update([
                     'proposed_fare' => $request->proposedFare,
                 ]);
 
-                $userId = TripRequest::where('id', $request->tripId)->first();
+                $userId = $tripRequest;
                 $deviceToken = User::where('id', $userId->passenger_id)->first();
                 $userData = CustomHelper::CheckUserExits();
                 $message = 'Ride Bid submitted by ' . $userData->name;
@@ -54,7 +67,7 @@ class TripBidController extends Controller
                     'proposed_fare' => $request->proposedFare,
                     'status' => 0,
                 ]);
-                $userId = TripRequest::where('id', $request->tripId)->first();
+                $userId = $tripRequest;
                 $deviceToken = User::where('id', $userId->passenger_id)->first();
                 $userData = CustomHelper::CheckUserExits();
                 $message = 'Ride Bid submitted by ' . $userData->name;

@@ -37,6 +37,23 @@ class UserController extends Controller
                 return CustomHelper::ErrorResponse(trans('Your phone and password are wrong or your account is not activated.', [], $language));
             }
         } catch (\Exception $e) {
+            // QueryException messages include SQL bindings (including device tokens).
+            // Log the underlying cause without SQL, request data, or trace arguments.
+            $cause = $e->getPrevious() ?? $e;
+            $message = $cause->getMessage();
+            foreach ([$request->password, $request->deviceToken, $request->phone] as $sensitiveValue) {
+                if (is_string($sensitiveValue) && $sensitiveValue !== '') {
+                    $message = str_replace($sensitiveValue, '[REDACTED]', $message);
+                }
+            }
+            Log::error('Login failed unexpectedly.', [
+                'exception_class' => get_class($e),
+                'error_code' => $cause->getCode(),
+                'message' => $message,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
             return CustomHelper::ErrorResponse(trans('Something Wrong Please try again.', [], $language));
         }
     }

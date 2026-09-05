@@ -7,6 +7,29 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## HopOn admin navigation
+
+On a fresh migrated database, run `php artisan db:seed --class=AdminSeeder` to create
+the admin setup, including the HopOn business menus and Super Admin permissions.
+
+For an existing installation, run only:
+
+```sh
+php artisan db:seed --class=HopOnAdminMenuSeeder --force
+```
+
+This dedicated seeder adds missing route menus and missing Super Admin permission
+records. It can be rerun without duplicating those records or overwriting existing
+menu labels, ordering, disabled menus, permissions, accounts, or settings. Other
+admin roles must be granted access through the existing privilege management UI.
+Do not rerun the full `AdminSeeder` on an existing installation; it creates the
+initial admin account and settings again.
+
+After seeding, log in as Super Admin and check Manage Users, Manage Rides, Manage
+Trips, Safety Incident, and Reports in the sidebar. Existing installations may
+retain their customized labels or disabled menu entries. This change links to the
+existing pages; it does not change the public landing page or page functionality.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
