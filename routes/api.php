@@ -70,6 +70,7 @@ Route::group(['namespace' => '\App\Http\Controllers\Api'], function () {
     Route::post('statusMoney', 'CommonController@statusMoney');
     Route::post('statusCallback', 'CommonController@statusCallback');
     Route::post('driverSettlements', 'DriverSettlementController@index');
+    Route::post('customerRefunds', 'CustomerRefundController@index');
     Route::post('customerDirectDriverPayment', 'CustomerDirectPaymentController@store');
     Route::post('getCharges', 'CommonController@getCharges');
 

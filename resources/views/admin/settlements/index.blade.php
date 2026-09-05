@@ -1,6 +1,7 @@
 @extends('admin::layouts.admin_template')
 
 @section('content')
+    @include('admin.settlements.tabs', ['activeTab' => 'drivers'])
     <div class="card mb-4">
         <div class="card-header">
             <h4 class="card-title mb-3">Driver Settlement</h4>

@@ -160,6 +160,7 @@ Route::group(['middleware' => ['admin.auth'], 'namespace' => '\App\Http\Controll
     Route::get('report', ['uses' => 'ReportController@getIndex', 'as' => 'getManageReport']);
 
     Route::get('settlements', ['uses' => 'SettlementController@index', 'as' => 'admin.settlements.index']);
+    Route::post('settlements/customers/{customer}/refund', ['uses' => 'SettlementController@refundCustomer', 'as' => 'admin.settlements.refund-customer']);
     Route::post('settlements/drivers/{driver}/pay', ['uses' => 'SettlementController@payDriver', 'as' => 'admin.settlements.pay-driver']);
     Route::post('settlements/{driverPayout}/settle', ['uses' => 'SettlementController@settle', 'as' => 'admin.settlements.settle']);
 
